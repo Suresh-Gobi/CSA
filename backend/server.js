@@ -31,7 +31,6 @@ app.use(
   })
 );
 
-
 // Socket.IO setup
 io.on("connection", (socket) => {
   logger.info("A user connected");
