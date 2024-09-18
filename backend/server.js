@@ -25,14 +25,12 @@ db.sequelize
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema: graphqlSchema,
-    rootValue: graphqlResolvers,
+    schema: schema,  // Use the imported schema
+    rootValue: resolvers,  // Use the imported resolvers
     graphiql: true,
   })
 );
 
-// Routes
-app.use("/api", routes);
 
 // Socket.IO setup
 io.on("connection", (socket) => {
