@@ -10,7 +10,8 @@
     "socket.io": "^4.7.5"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "name": "backend",
   "version": "1.0.0",
@@ -18,5 +19,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.5"
+  }
 }
