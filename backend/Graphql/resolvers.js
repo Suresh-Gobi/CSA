@@ -1,13 +1,27 @@
-const db = require('../Models');
-const User = db.User;
+const bcrypt = require('bcrypt');
+const { User } = require('../Models'); 
 
-// Define resolvers for GraphQL queries and mutations
 const resolvers = {
   users: async () => {
     return await User.findAll();
   },
-  addUser: async ({ name, email, password }) => {
-    const user = await User.create({ name, email, password });
+  registerUser: async ({ username, email, password }) => {
+    // Check if the user already exists by email
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      throw new Error('Email already in use');
+    }
+
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user and save to the database
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+
     return user;
   },
 };

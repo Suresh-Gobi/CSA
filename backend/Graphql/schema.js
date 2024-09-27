@@ -1,10 +1,9 @@
 const { buildSchema } = require('graphql');
 
-// Define GraphQL schema
 const schema = buildSchema(`
   type User {
     id: ID!
-    name: String!
+    username: String!
     email: String!
   }
 
@@ -13,7 +12,7 @@ const schema = buildSchema(`
   }
 
   type Mutation {
-    addUser(name: String!, email: String!, password: String!): User
+    registerUser(username: String!, email: String!, password: String!): User
   }
 `);
 
