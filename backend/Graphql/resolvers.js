@@ -5,7 +5,7 @@ const resolvers = {
   users: async () => {
     return await User.findAll();
   },
-  registerUser: async ({ username, email, password }) => {
+  registerUser: async ({ username, email, role, password }) => {
     // Check if the user already exists by email
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -19,6 +19,7 @@ const resolvers = {
     const user = await User.create({
       username,
       email,
+      role,
       password: hashedPassword,
     });
 

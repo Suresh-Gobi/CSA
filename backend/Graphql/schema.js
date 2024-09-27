@@ -4,6 +4,7 @@ const schema = buildSchema(`
   type User {
     id: ID!
     username: String!
+    role: String!
     email: String!
   }
 
@@ -12,7 +13,7 @@ const schema = buildSchema(`
   }
 
   type Mutation {
-    registerUser(username: String!, email: String!, password: String!): User
+    registerUser(username: String!, email: String!, role: String!, password: String!): User
   }
 `);
 

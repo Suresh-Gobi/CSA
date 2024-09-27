@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         isEmail: true,
       },
     },
+    role: {
+      type: DataTypes.STRING,
+      default: "admin"
+    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
