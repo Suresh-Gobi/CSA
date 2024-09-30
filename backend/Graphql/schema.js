@@ -31,6 +31,11 @@ const schema = buildSchema(`
       date_of_birth: String,     # New field (optional)
       address: String            # New field (optional)
     ): User
+
+    loginUser(
+      email: String!,
+      password: String!
+    ): User
   }
 `);
 
