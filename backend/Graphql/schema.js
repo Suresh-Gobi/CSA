@@ -6,12 +6,17 @@ const schema = buildSchema(`
     username: String!
     role: String!
     email: String!
-    first_name: String!          # New field
-    last_name: String!           # New field
-    phone_number: String         # New field (optional)
-    profile_picture: String      # New field (optional)
-    date_of_birth: String        # New field (optional)
-    address: String              # New field (optional)
+    first_name: String!
+    last_name: String!
+    phone_number: String
+    profile_picture: String
+    date_of_birth: String
+    address: String
+  }
+
+  type AuthPayload {
+    user: User!
+    token: String!
   }
 
   type Query {
@@ -24,18 +29,15 @@ const schema = buildSchema(`
       email: String!,
       role: String!,
       password: String!,
-      first_name: String!,       # New field
-      last_name: String!,        # New field
-      phone_number: String,      # New field (optional)
-      profile_picture: String,   # New field (optional)
-      date_of_birth: String,     # New field (optional)
-      address: String            # New field (optional)
+      first_name: String!,
+      last_name: String!,
+      phone_number: String,
+      profile_picture: String,
+      date_of_birth: String,
+      address: String
     ): User
 
-    loginUser(
-      email: String!,
-      password: String!
-    ): User
+    loginUser(email: String!, password: String!): AuthPayload! 
   }
 `);
 

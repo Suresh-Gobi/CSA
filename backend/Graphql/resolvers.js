@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require("uuid");
 const { User } = require("../Models");
 
@@ -46,6 +47,7 @@ const resolvers = {
     return user;
   },
 
+  
   loginUser: async ({ email, password }) => {
     // Check if the user exists by email
     const user = await User.findOne({ where: { email } });
@@ -59,20 +61,15 @@ const resolvers = {
       throw new Error("Invalid password");
     }
 
-    // Return user details (omit password for security)
+    // Generate a JWT token
+    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    // token (omit password for security)
     return {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      first_name: user.first_name, // Include new fields
-      last_name: user.last_name, // Include new fields
-      phone_number: user.phone_number, // Include new fields
-      profile_picture: user.profile_picture, // Include new fields
-      date_of_birth: user.date_of_birth, // Include new fields
-      address: user.address, // Include new fields
+      token, // Return the generated token
     };
   },
+
 };
 
 module.exports = resolvers;
