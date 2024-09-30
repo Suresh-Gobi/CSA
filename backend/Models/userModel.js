@@ -1,5 +1,4 @@
 const { DataTypes } = require('sequelize');
-const { v4: uuidv4 } = require('uuid'); 
 
 module.exports = (sequelize) => {
   const User = sequelize.define('User', {
@@ -25,9 +24,33 @@ module.exports = (sequelize) => {
         isEmail: true,
       },
     },
+    first_name: {
+      type: DataTypes.STRING,
+      allowNull: true, 
+    },
+    last_name: {
+      type: DataTypes.STRING,
+      allowNull: true, 
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+      allowNull: true, 
+    },
+    profile_picture: {
+      type: DataTypes.STRING,
+      allowNull: true, 
+    },
+    date_of_birth: {
+      type: DataTypes.DATE,
+      allowNull: true, 
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true, 
+    },
     role: {
       type: DataTypes.STRING,
-      defaultValue: "admin"
+      defaultValue: "admin",
     },
     password: {
       type: DataTypes.STRING,
@@ -35,6 +58,18 @@ module.exports = (sequelize) => {
       validate: {
         len: [8, 100],
       },
+    },
+    is_active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+    last_login: {
+      type: DataTypes.DATE,
+      allowNull: true, 
+    },
+    password_reset_token: {
+      type: DataTypes.STRING,
+      allowNull: true, 
     },
   }, {
     timestamps: true,
