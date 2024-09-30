@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
 const { User } = require('../Models'); 
 
 const resolvers = {
@@ -17,6 +18,7 @@ const resolvers = {
 
     // Create a new user and save to the database
     const user = await User.create({
+      id: uuidv4(),
       username,
       email,
       role,
