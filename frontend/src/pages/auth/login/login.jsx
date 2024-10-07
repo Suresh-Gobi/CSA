@@ -1,38 +1,40 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 
+// GraphQL mutation to log in the user
 const LOGIN_USER = gql`
   mutation LoginUser($email: String!, $password: String!) {
     loginUser(email: $email, password: $password) {
       token
-      user {
-        id
-        username
-        email
-        role
-      }
     }
   }
 `;
 
-export default function Login() {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginUser] = useMutation(LOGIN_USER);
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await loginUser({ variables: { email, password } });
       const token = data.loginUser.token;
-      
+
       // Store the token in localStorage
       localStorage.setItem('token', token);
       console.log('Login successful:', data.loginUser);
-      // You can redirect the user or perform other actions here
+
+      // Optionally redirect or perform other actions after login
     } catch (error) {
       console.error('Error logging in:', error.message);
-      // Handle the error (e.g., display a message to the user)
+      // Handle error messages from the server
+      if (error.graphQLErrors) {
+        error.graphQLErrors.forEach(({ message }) => {
+          console.error('GraphQL error:', message);
+        });
+      }
     }
   };
 
@@ -66,4 +68,6 @@ export default function Login() {
       </form>
     </div>
   );
-}
+};
+
+export default Login;
