@@ -1,5 +1,6 @@
-require("dotenv").config();
 const express = require("express");
+const cors = require('cors');
+require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
 const { graphqlHTTP } = require("express-graphql");
@@ -12,6 +13,7 @@ const resolvers = require("./Graphql/resolvers");
 
 // Initialize Express app
 const app = express();
+app.use(cors({ origin: '*' }));
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -25,11 +27,16 @@ db.sequelize
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema: schema,  // Use the imported schema
-    rootValue: resolvers,  // Use the imported resolvers
+    schema: schema,
+    rootValue: resolvers,
     graphiql: true,
+    formatError: (err) => {
+      logger.error(err);
+      return err; // Customize error format as needed
+    },
   })
 );
+
 
 // Socket.IO setup
 io.on("connection", (socket) => {

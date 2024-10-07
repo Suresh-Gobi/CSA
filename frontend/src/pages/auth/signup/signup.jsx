@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 
-// Define the GraphQL mutation
-const REGISTER_USER = gql`
+// GraphQL mutation for user registration
+const USER_REGISTRATION = gql`
   mutation RegisterUser(
     $username: String!,
     $email: String!,
-    $role: String!,
     $password: String!,
-    $first_name: String!,
-    $last_name: String!,
+    $role: String,
+    $first_name: String,
+    $last_name: String,
     $phone_number: String,
     $profile_picture: String,
     $date_of_birth: String,
@@ -18,8 +18,8 @@ const REGISTER_USER = gql`
     registerUser(
       username: $username,
       email: $email,
-      role: $role,
       password: $password,
+      role: $role,
       first_name: $first_name,
       last_name: $last_name,
       phone_number: $phone_number,
@@ -35,12 +35,13 @@ const REGISTER_USER = gql`
   }
 `;
 
-export default function Signup() {
-  const [formData, setFormData] = useState({
+const Signup = () => {
+  // State for form data
+  const [formDetails, setFormDetails] = useState({
     username: '',
     email: '',
     password: '',
-    role: '', // Add this if necessary
+    role: 'admin', // Default role
     first_name: '',
     last_name: '',
     phone_number: '',
@@ -49,40 +50,41 @@ export default function Signup() {
     address: '',
   });
 
-  const [registerUser] = useMutation(REGISTER_USER);
+  const [registerUser] = useMutation(USER_REGISTRATION);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
+  // Update form state on input change
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormDetails((prevDetails) => ({
+      ...prevDetails,
       [name]: value,
-    });
+    }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Handle form submission
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
     try {
-      const { data } = await registerUser({ variables: formData });
-      console.log('User registered:', data.registerUser);
-      // You can redirect or perform other actions after successful registration
+      const { data } = await registerUser({ variables: formDetails });
+      console.log('Successfully registered user:', data.registerUser);
     } catch (error) {
-      console.error('Error registering user:', error.message);
-      // Handle the error (e.g., display a message to the user)
+      console.error('Registration error:', error); // Log the complete error object
     }
   };
+  
 
   return (
     <div>
-      <h2>Signup</h2>
-      <form onSubmit={handleSubmit}>
+      <h2>Sign Up</h2>
+      <form onSubmit={handleFormSubmit}>
         <div>
           <label>
             Username:
             <input
               type="text"
               name="username"
-              value={formData.username}
-              onChange={handleChange}
+              value={formDetails.username}
+              onChange={handleInputChange}
               required
             />
           </label>
@@ -93,8 +95,8 @@ export default function Signup() {
             <input
               type="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
+              value={formDetails.email}
+              onChange={handleInputChange}
               required
             />
           </label>
@@ -105,15 +107,17 @@ export default function Signup() {
             <input
               type="password"
               name="password"
-              value={formData.password}
-              onChange={handleChange}
+              value={formDetails.password}
+              onChange={handleInputChange}
               required
             />
           </label>
         </div>
-        {/* Add other input fields as necessary */}
-        <button type="submit">Sign Up</button>
+        {/* Additional fields can be added as needed */}
+        <button type="submit">Create Account</button>
       </form>
     </div>
   );
-}
+};
+
+export default Signup;
