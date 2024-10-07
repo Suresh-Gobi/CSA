@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 
-// GraphQL mutation for user registration
 const USER_REGISTRATION = gql`
   mutation RegisterUser(
     $username: String!,
@@ -41,7 +40,7 @@ const Signup = () => {
     username: '',
     email: '',
     password: '',
-    role: 'admin', // Default role
+    role: 'admin',
     first_name: '',
     last_name: '',
     phone_number: '',
