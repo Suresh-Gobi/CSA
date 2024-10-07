@@ -1,7 +1,9 @@
 import { createStore, applyMiddleware } from "redux";
-import rootReducer from "./reducers"; // Import your rootReducer from reducers/index.js
 import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "./reducers"; // Combine reducers in this file
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
+// Create the Redux store with thunk middleware and Redux DevTools support
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
 export default store;
