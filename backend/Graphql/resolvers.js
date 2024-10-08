@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const { User } = require("../Models");
 
@@ -31,23 +31,22 @@ const resolvers = {
 
     // Create a new user and save to the database
     const user = await User.create({
-      id: uuidv4(), // Generate a unique ID using UUID
+      id: uuidv4(),
       username,
       email,
       role,
       password: hashedPassword,
-      first_name, // New field
-      last_name, // New field
-      phone_number, // New field
-      profile_picture, // New field
-      date_of_birth, // New field
-      address, // New field
+      first_name, 
+      last_name,
+      phone_number, 
+      profile_picture, 
+      date_of_birth,
+      address,
     });
 
     return user;
   },
 
-  
   loginUser: async ({ email, password }) => {
     // Check if the user exists by email
     const user = await User.findOne({ where: { email } });
@@ -62,7 +61,11 @@ const resolvers = {
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     // token (omit password for security)
     return {
@@ -70,6 +73,19 @@ const resolvers = {
     };
   },
 
+  // Query to get all users
+  users: async () => {
+    try {
+      // Find all users and exclude the password field for security
+      const users = await User.findAll({
+        attributes: { exclude: ["password"] },
+      });
+      return users;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw new Error("Error fetching users");
+    }
+  },
 };
 
 module.exports = resolvers;

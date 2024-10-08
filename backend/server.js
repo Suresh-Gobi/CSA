@@ -5,7 +5,6 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { graphqlHTTP } = require("express-graphql");
 const { buildSchema } = require("graphql");
-const routes = require("./routes");
 const logger = require("./utils/logger");
 const db = require("./Models");
 const schema = require("./Graphql/schema");
@@ -17,7 +16,7 @@ app.use(cors({ origin: '*' }));
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Test database connection
+//database connection
 db.sequelize
   .authenticate()
   .then(() => logger.info("MySQL connected"))
@@ -32,11 +31,10 @@ app.use(
     graphiql: true,
     formatError: (err) => {
       logger.error(err);
-      return err; // Customize error format as needed
+      return err;
     },
   })
 );
-
 
 // Socket.IO setup
 io.on("connection", (socket) => {
