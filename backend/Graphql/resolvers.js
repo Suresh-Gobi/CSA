@@ -86,6 +86,7 @@ const resolvers = {
       throw new Error("Error fetching users");
     }
   },
+  
 };
 
 module.exports = resolvers;
