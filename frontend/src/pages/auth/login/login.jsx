@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 // GraphQL mutation to log in the user
 const LOGIN_USER = gql`
@@ -14,6 +15,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginUser] = useMutation(LOGIN_USER);
+  const navigate = useNavigate(); // Initialize useNavigate for redirection
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -26,7 +28,9 @@ const Login = () => {
       localStorage.setItem('token', token);
       console.log('Login successful:', data.loginUser);
 
-      // Optionally redirect or perform other actions after login
+      // Redirect to /dashboard with the token as a query parameter
+      navigate(`/dashboard?access=${token}`);
+      
     } catch (error) {
       console.error('Error logging in:', error.message);
       // Handle error messages from the server
