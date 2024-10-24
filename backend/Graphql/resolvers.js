@@ -4,17 +4,6 @@ const { v4: uuidv4 } = require("uuid");
 const { User } = require("../Models");
 
 const resolvers = {
-  users: async () => {
-    try {
-      return await User.findAll({
-        attributes: { exclude: ["password"] }, // Exclude passwords from results
-      });
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      throw new Error("Error fetching users");
-    }
-  },
-
   registerUser: async ({
     username,
     email,
@@ -83,27 +72,43 @@ const resolvers = {
     };
   },
 
-  user: async (_, { token }) => {
-    if (!token) {
-      throw new Error("Authentication token is required.");
-    }
+  user: async (_, __, { token }) => {
+    // Change to get token from context
+    console.log("Received token:", token); // Log the received token
 
     try {
+      // Check if the token is provided
+      if (!token) {
+        throw new Error("Token must be provided.");
+      }
+
+      // If token is in the format "Bearer <token>", split to get the actual token
+      const tokenParts = token.split(" ");
+      if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+        throw new Error("Invalid token format. Use 'Bearer <token>'");
+      }
+
+      const actualToken = tokenParts[1]; // Extract the token
+
       // Verify the token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // Fetch the user details from the database
+      const decoded = jwt.verify(actualToken, process.env.JWT_SECRET);
+      console.log("Decoded token:", decoded); // Log the decoded token
+
+      // Fetch user from the database
       const user = await User.findOne({
-        where: { id: decoded.id },
+        where: { id: decoded.id }, // or decoded.email, based on your implementation
         attributes: { exclude: ["password"] },
       });
 
+      // Check if user was found
       if (!user) {
         throw new Error("User not found");
       }
 
-      return user;
+      return user; // Return the user data
     } catch (error) {
-      // Handle different types of errors
+      console.error("Error:", error); // Log the error
+      // Handle JWT errors
       if (error.name === "JsonWebTokenError") {
         throw new Error("Invalid authentication token.");
       }

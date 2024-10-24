@@ -20,7 +20,7 @@ const schema = buildSchema(`
     token: String!
   }
 
-  type Query {            
+  type Query {
     user(token: String!): User
   }
 
