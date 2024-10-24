@@ -4,7 +4,6 @@ require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
 const { graphqlHTTP } = require("express-graphql");
-const { buildSchema } = require("graphql");
 const logger = require("./utils/logger");
 const db = require("./Models");
 const schema = require("./Graphql/schema");
@@ -16,7 +15,7 @@ app.use(cors({ origin: '*' }));
 const server = http.createServer(app);
 const io = new Server(server);
 
-//database connection
+// Database connection
 db.sequelize
   .authenticate()
   .then(() => logger.info("MySQL connected"))
@@ -25,16 +24,18 @@ db.sequelize
 // GraphQL middleware
 app.use(
   "/graphql",
-  graphqlHTTP({
+  graphqlHTTP((req, res) => ({
     schema: schema,
     rootValue: resolvers,
     graphiql: true,
-    formatError: (err) => {
+    context: { req },
+    customFormatErrorFn: (err) => {
       logger.error(err);
       return err;
     },
-  })
+  }))
 );
+
 
 // Socket.IO setup
 io.on("connection", (socket) => {

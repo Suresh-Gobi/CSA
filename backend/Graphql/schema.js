@@ -12,6 +12,7 @@ const schema = buildSchema(`
     profile_picture: String
     date_of_birth: String
     address: String
+    is_active: Boolean!  
   }
 
   type AuthPayload {
@@ -19,8 +20,8 @@ const schema = buildSchema(`
     token: String!
   }
 
-  type Query {
-    users: [User]
+  type Query {            
+    user(token: String!): User
   }
 
   type Mutation {
@@ -35,7 +36,7 @@ const schema = buildSchema(`
       profile_picture: String,
       date_of_birth: String,
       address: String
-    ): User
+    ): User                       
 
     loginUser(email: String!, password: String!): AuthPayload! 
   }

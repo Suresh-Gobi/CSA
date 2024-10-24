@@ -5,7 +5,14 @@ const { User } = require("../Models");
 
 const resolvers = {
   users: async () => {
-    return await User.findAll();
+    try {
+      return await User.findAll({
+        attributes: { exclude: ["password"] }, // Exclude passwords from results
+      });
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw new Error("Error fetching users");
+    }
   },
 
   registerUser: async ({
@@ -36,15 +43,18 @@ const resolvers = {
       email,
       role,
       password: hashedPassword,
-      first_name, 
+      first_name,
       last_name,
-      phone_number, 
-      profile_picture, 
+      phone_number,
+      profile_picture,
       date_of_birth,
       address,
     });
 
-    return user;
+    return {
+      ...user.get(), // Spread user object to return all fields
+      password: undefined, // Exclude password from result
+    };
   },
 
   loginUser: async ({ email, password }) => {
@@ -67,26 +77,42 @@ const resolvers = {
       { expiresIn: "1h" }
     );
 
-    // token (omit password for security)
+    // Return the generated token
     return {
-      token, // Return the generated token
+      token,
     };
   },
 
-  // Query to get all users
-  users: async () => {
+  user: async (_, { token }) => {
+    if (!token) {
+      throw new Error("Authentication token is required.");
+    }
+
     try {
-      // Find all users and exclude the password field for security
-      const users = await User.findAll({
+      // Verify the token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // Fetch the user details from the database
+      const user = await User.findOne({
+        where: { id: decoded.id },
         attributes: { exclude: ["password"] },
       });
-      return users;
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user;
     } catch (error) {
-      console.error("Error fetching users:", error);
-      throw new Error("Error fetching users");
+      // Handle different types of errors
+      if (error.name === "JsonWebTokenError") {
+        throw new Error("Invalid authentication token.");
+      }
+      if (error.name === "TokenExpiredError") {
+        throw new Error("Authentication token has expired.");
+      }
+      throw new Error("Error fetching user details");
     }
   },
-  
 };
 
 module.exports = resolvers;
