@@ -1,4 +1,4 @@
-const { buildSchema } = require('graphql');
+const { buildSchema } = require("graphql");
 
 const schema = buildSchema(`
   type User {
@@ -12,16 +12,16 @@ const schema = buildSchema(`
     profile_picture: String
     date_of_birth: String
     address: String
-    is_active: Boolean!  
+  }
+
+  type Query {
+     user: User
+     users: [User!]!
   }
 
   type AuthPayload {
     user: User!
     token: String!
-  }
-
-  type Query {
-    user(token: String!): User
   }
 
   type Mutation {

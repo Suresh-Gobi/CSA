@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
@@ -11,7 +11,7 @@ const resolvers = require("./Graphql/resolvers");
 
 // Initialize Express app
 const app = express();
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: "*" }));
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -24,18 +24,16 @@ db.sequelize
 // GraphQL middleware
 app.use(
   "/graphql",
-  graphqlHTTP((req, res) => ({
-    schema: schema,
-    rootValue: resolvers,
-    graphiql: true,
-    context: { req },
-    customFormatErrorFn: (err) => {
-      logger.error(err);
-      return err;
-    },
-  }))
+  graphqlHTTP((req) => {
+    console.log("Received request headers:", req.headers);
+    return {
+      schema,
+      rootValue: resolvers,
+      context: { headers: req.headers },
+      graphiql: true,
+    };
+  })
 );
-
 
 // Socket.IO setup
 io.on("connection", (socket) => {

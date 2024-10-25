@@ -65,59 +65,15 @@ const resolvers = {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-
-    // Return the generated token
     return {
       token,
     };
   },
 
-  user: async (_, __, { token }) => {
-    // Change to get token from context
-    console.log("Received token:", token); // Log the received token
-
-    try {
-      // Check if the token is provided
-      if (!token) {
-        throw new Error("Token must be provided.");
-      }
-
-      // If token is in the format "Bearer <token>", split to get the actual token
-      const tokenParts = token.split(" ");
-      if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
-        throw new Error("Invalid token format. Use 'Bearer <token>'");
-      }
-
-      const actualToken = tokenParts[1]; // Extract the token
-
-      // Verify the token
-      const decoded = jwt.verify(actualToken, process.env.JWT_SECRET);
-      console.log("Decoded token:", decoded); // Log the decoded token
-
-      // Fetch user from the database
-      const user = await User.findOne({
-        where: { id: decoded.id }, // or decoded.email, based on your implementation
-        attributes: { exclude: ["password"] },
-      });
-
-      // Check if user was found
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      return user; // Return the user data
-    } catch (error) {
-      console.error("Error:", error); // Log the error
-      // Handle JWT errors
-      if (error.name === "JsonWebTokenError") {
-        throw new Error("Invalid authentication token.");
-      }
-      if (error.name === "TokenExpiredError") {
-        throw new Error("Authentication token has expired.");
-      }
-      throw new Error("Error fetching user details");
-    }
+  users: async () => {
+    return await User.findAll();
   },
+  
 };
 
 module.exports = resolvers;
