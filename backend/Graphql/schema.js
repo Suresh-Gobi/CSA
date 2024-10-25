@@ -15,8 +15,7 @@ const schema = buildSchema(`
   }
 
   type Query {
-     user: User
-     users: [User!]!
+     user(id: ID!): User
   }
 
   type AuthPayload {

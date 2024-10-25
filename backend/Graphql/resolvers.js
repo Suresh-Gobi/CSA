@@ -73,7 +73,17 @@ const resolvers = {
   users: async () => {
     return await User.findAll();
   },
-  
+
+  user: async ({ id }) => {
+    if (!id) {
+      throw new Error("ID is required");
+    }
+    const user = await User.findByPk(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  },
 };
 
 module.exports = resolvers;
