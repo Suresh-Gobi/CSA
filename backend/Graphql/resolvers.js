@@ -41,8 +41,8 @@ const resolvers = {
     });
 
     return {
-      ...user.get(), // Spread user object to return all fields
-      password: undefined, // Exclude password from result
+      ...user.get(),
+      password: undefined,
     };
   },
 
@@ -74,16 +74,47 @@ const resolvers = {
     return await User.findAll();
   },
 
-  user: async ({ id }) => {
-    if (!id) {
-      throw new Error("ID is required");
-    }
-    const user = await User.findByPk(id);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    return user;
-  },
+  // user: async ({ id }) => {
+  //   if (!id) {
+  //     throw new Error("ID is required");
+  //   }
+  //   const user = await User.findByPk(id);
+  //   if (!user) {
+  //     throw new Error("User not found");
+  //   }
+  //   return user;
+  // },
+
+  // user: async (_, __, context) => {
+  //   try {
+  //     // Get the token from the authorization header
+  //     const authHeader = context.headers.authorization;
+  //     if (!authHeader) {
+  //       throw new Error("Authorization header is missing");
+  //     }
+
+  //     const token = authHeader.split(" ")[1]; // Extract the token from 'Bearer <token>'
+  //     if (!token) {
+  //       throw new Error("Token is missing");
+  //     }
+
+  //     // Verify and decode the token to get the user ID
+  //     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  //     const userId = decodedToken.id;
+
+  //     // Fetch the user details based on the decoded user ID
+  //     const user = await User.findByPk(userId);
+  //     if (!user) {
+  //       throw new Error("User not found");
+  //     }
+
+  //     // Return the user details
+  //     return user;
+  //   } catch (error) {
+  //     console.error("Error fetching user details:", error);
+  //     throw new Error("Error fetching user details: " + error.message);
+  //   }
+  // },
 };
 
 module.exports = resolvers;

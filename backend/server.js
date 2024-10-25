@@ -29,7 +29,9 @@ app.use(
     return {
       schema,
       rootValue: resolvers,
-      context: { headers: req.headers },
+      context: ({ req }) => {
+        return { req };
+      },
       graphiql: true,
     };
   })
