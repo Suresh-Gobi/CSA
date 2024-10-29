@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const { graphqlHTTP } = require("express-graphql");
 const logger = require("./utils/logger");
 const db = require("./Models");
+const userRoutes = require("./Routes/user.route");
 const schema = require("./Graphql/schema");
 const resolvers = require("./Graphql/resolvers");
 
@@ -20,6 +21,9 @@ db.sequelize
   .authenticate()
   .then(() => logger.info("MySQL connected"))
   .catch((err) => logger.error("MySQL connection error:", err));
+
+// AllRoutes
+app.use("/api", userRoutes);
 
 // GraphQL middleware
 app.use(

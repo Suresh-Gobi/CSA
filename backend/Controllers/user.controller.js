@@ -1,6 +1,7 @@
-const db = require('../config/database');
+const db = require('../Models/index');
 const { User } = db;
 
+// Get All User Details
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
@@ -17,3 +18,4 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+//
