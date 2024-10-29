@@ -1,18 +1,11 @@
-const jwt = require('jsonwebtoken');
-
-// function to verify JWT token
-exports.verifyToken = (req, res, next) => {
-  const token = req.header('Authorization');
-
-  if (!token) {
-    return res.status(401).json({ message: 'Token is missing' });
-  }
-
-  try {
-    const decoded = jwt.verify(token.split(' ')[1], process.env.JWT_SECRET);
-    req.user = decoded; // Attach decoded user information to the request object
-    next(); // Continue to the next route handler
-  } catch (error) {
-    return res.status(401).json({ message: 'Token is invalid' });
-  }
+module.exports = (requiredRoles) => {
+  return (req, res, next) => {
+    if (!req.user || !requiredRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. You do not have permission to access this resource.",
+      });
+    }
+    next();
+  };
 };
