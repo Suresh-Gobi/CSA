@@ -21,6 +21,7 @@ db.sequelize = sequelize;
 
 // Import models
 db.User = require('./userModel')(sequelize, Sequelize);
+db.Ticket = require('./ticket.model')(sequelize, Sequelize);
 
 // Export the db object with Sequelize and models
 module.exports = db;
