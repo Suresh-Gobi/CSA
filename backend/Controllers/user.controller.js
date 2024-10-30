@@ -1,6 +1,7 @@
 const db = require("../Models/index");
 const { User } = db;
 const jwt = require("jsonwebtoken");
+const {sendVerificationEmail} = require("../Middleware/send-email");
 
 // Get All User Details
 exports.getAllUsers = async (req, res) => {
@@ -67,7 +68,7 @@ exports.getLoggedUserDetails = async (req, res) => {
   }
 };
 
-// Update User Details
+// Update User Details (need to be tested)
 exports.updateLoggedUserDetails = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -124,7 +125,44 @@ exports.updateLoggedUserDetails = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server Error"
-    })
+      message: "Server Error",
+    });
+  }
+};
+
+//request password reset
+exports.requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User with this email does not exist",
+      });
+    }
+
+    // Generate a token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const tokenExpiry = Date.now() + 3600000;
+
+    user.password_reset_token = resetToken;
+    user.password_reset_token_expires = tokenExpiry;
+    await user.save();
+
+    // Here, send the resetToken to the user's email
+    // Example: await sendEmail(user.email, "Password Reset", `Your token is: ${resetToken}`);
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset token has been sent to your email",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
