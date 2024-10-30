@@ -1,0 +1,44 @@
+// controllers/user.controller.js
+const db = require('../Models/index');
+const { User } = db;
+
+// Update logged-in user's details
+exports.updateUserDetails = async (req, res) => {
+  const userId = req.user.id; // Get user ID from decoded JWT token
+  const { username, email, first_name, last_name, phone_number, address } = req.body;
+
+  try {
+    // Find the user by their ID
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Update fields only if they are provided in the request body
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (first_name) user.first_name = first_name;
+    if (last_name) user.last_name = last_name;
+    if (phone_number) user.phone_number = phone_number;
+    if (address) user.address = address;
+
+    // Save the updated user details
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User details updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while updating user details",
+    });
+  }
+};
